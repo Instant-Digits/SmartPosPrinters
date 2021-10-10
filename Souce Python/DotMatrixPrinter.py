@@ -1,11 +1,28 @@
-## Python program to print the data
-d = {1: ["Python", 33.2, 'UP'],
-2: ["Java", 23.54, 'DOWN'],
-3: ["Ruby", 17.22, 'UP'],
-10: ["Lua", 10.55, 'DOWN'],
-5: ["Groovy", 9.22, 'DOWN'],
-6: ["C", 1.55, 'UP'] }
-print ("{:<4} {:<15} {:<10} {:<10}".format('Pos','Lang','Percent','Change'))
-for k, v in d.items():
-    lang, perc, change = v
-    print ("{:<4} {:<15} {:<10} {:<10}".format(k, lang, perc, change))
+from firebase import Firebase
+from functions import currencyFormater
+
+config = {
+        "apiKey": "AIzaSyANL3DLuQ9IZxN5sOjxODg4IoPuXQm6UxM",
+        "authDomain":  "aidrevs-test.firebaseapp.com",
+        "databaseURL":  "https://aidrevs-test-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "storageBucket": "aidrevs-test.appspot.com"
+    }
+firebasecon = Firebase(config)
+db = firebasecon.database()
+
+printerData= db.child('test1/Printer').get().val();
+printerData= dict(printerData);
+printingHeader=printerData['PrintingDataHeader'];
+
+printData= db.child('test1/print').get().val();
+
+for (key, value) in printData['itemList'].items():
+    print(value['make']+' '+value['item'] );
+    print ("{:<3} {:<15} {:<10} ".format(' ', 
+            str(value['quantity']) +' x Rs.'+currencyFormater(value['unitPrice']), 
+            'Rs.'+currencyFormater(value['unitPrice']*value['quantity'])
+            ));
+
+print ('')
+print ("{:<2} {:<14} {:<10}".format('','TOTAL','Rs. '+currencyFormater(printData['total'])))
+
