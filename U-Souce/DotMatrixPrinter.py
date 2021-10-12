@@ -33,7 +33,9 @@ def listener(message):
 		PrinterJob(data)
 		
 
-db.child('test1/thermalPrint').stream(listener)
+
+
+#db.child('test1/thermalPrint').stream(listener)
 
 
 # left_aligned = "Left Align"
