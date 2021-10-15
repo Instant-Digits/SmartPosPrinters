@@ -1,34 +1,6 @@
-from escpos.connections import getUSBPrinter
-from firebase import Firebase
 from functions import currencyFormater
 
-config = {
-        "apiKey": "AIzaSyANL3DLuQ9IZxN5sOjxODg4IoPuXQm6UxM",
-        "authDomain":  "aidrevs-test.firebaseapp.com",
-        "databaseURL":  "https://aidrevs-test-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "storageBucket": "aidrevs-test.appspot.com"
-    }
-firebasecon = Firebase(config)
-db = firebasecon.database()
-
-
-
-printerData= db.child('test1/Printer').get().val();
-printerData= dict(printerData);
-printingHeader=printerData['PrintingDataHeader'];
-
-
-
-
-printer = getUSBPrinter()(idVendor=0x0483,  # USB vendor and product Ids for Bixolon SRP-350plus
-                  idProduct=0x5743,  # printer
-                  inputEndPoint=0x82,
-                  outputEndPoint=0x01)
-
-
-
-def PrinterJob(printData):
-    global printer
+def setThermalPrinting(printer,  printingHeader,printData):     
 
     #Header
     printer.align('center')
@@ -86,13 +58,9 @@ def PrinterJob(printData):
     printer.text('\x1dV\x00')
 
 
-def listener(message):
-	data=message["data"]
-	if(data):
-		db.child('test1/thermalPrint').remove()
-		PrinterJob(data)
 
-db.child('test1/thermalPrint').stream(listener)
 
-# printingData= db.child('test1/thermalPrint').get().val();
-# PrinterJob(printingData)
+# printer = getUSBPrinter()(idVendor=0x0483,  # USB vendor and product Ids for Bixolon SRP-350plus
+#                   idProduct=0x5743,  # printer
+#                   inputEndPoint=0x82,
+#                   outputEndPoint=0x01)
