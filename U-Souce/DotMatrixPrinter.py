@@ -1,5 +1,6 @@
 from firebase import Firebase
 from functions import currencyFormater
+from uuid import getnode as get_mac
 
 config = {
         "apiKey": "AIzaSyANL3DLuQ9IZxN5sOjxODg4IoPuXQm6UxM",
@@ -10,9 +11,33 @@ config = {
 firebasecon = Firebase(config)
 db = firebasecon.database()
 
-printerData= db.child('test1/Printer').get().val();
-printerData= dict(printerData);
-printingHeader=printerData['PrintingDataHeader'];
+mac = get_mac()
+print(mac)
+
+def getConfigurationData (mac):
+    configData=db.child('/Printers/'+str(mac)).get().val();
+    configData= dict(configData)
+    if ('config' in configData.keys()):
+        printerConfig =configData['config']
+        for (key, value) in printerConfig.items():
+            for (idName, idValue) in value.items():
+                print((idName, idValue))
+    return (dict(configData))
+
+metaData = getConfigurationData (mac)
+printerConfig =metaData['config']
+hex_s =  printerConfig['formPrinter']['idProduct']
+a = int(hex_s,16)
+
+print(0x0046==a)
+
+
+print (printerConfig)
+
+
+# printerData= db.child('test1/Printer').get().val();
+# printerData= dict(printerData);
+# printingHeader=printerData['PrintingDataHeader'];
 
 #printData= db.child('test1/thermalPrint').get().val();
 
