@@ -16,9 +16,11 @@ def configPrinters (configData):
                                                 idProduct=int(value['idProduct'],16),  # printer
                                                 inputEndPoint=int(value['inputEndPoint'],16),
                                                 outputEndPoint=int(value['outputEndPoint'],16))
+                print (key+' DETECTED')
             except RuntimeError:
                 print (key+' NOT DETECTED')
+                return False
         return printers
-    return (configData)
+    return (False)
 
 #print (currencyFormater(12345678))
