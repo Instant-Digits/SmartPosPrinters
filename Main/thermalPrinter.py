@@ -5,7 +5,7 @@ def setThermalPrinting(printer,  printingHeader,printData):
     #Header
     printer.align('center')
     printer.bold()
-    printer.text(printingHeader['name'])
+    printer.text(printingHeader['name'].upper())
     printer.lf()
     printer.bold(False)
 
@@ -14,28 +14,45 @@ def setThermalPrinting(printer,  printingHeader,printData):
     printer.lf()	
     printer.text(printingHeader['tp'])
     printer.lf()
-    
+    printer.text('Invoice No :- '+printData['invoiceSN'])
+    printer.lf()
+
     printer.lf()
     printer.align('left')
     printer.text(printData['date'] +'@'+printData['time']+' -- '+printData['name']+' -- '+printData['type'])
     printer.lf()
 
-
+   
     #print Bill
-    for (key, value) in printData['itemList'].items():
-        printer.align('left');
-        printer.text(value['make']+' '+value['item'] );
-        printer.lf();
-        printer.align('right')
-        printer.text ("{:<1} {:<15} {right_aligned:>12} ".format(' ', 
-                str(value['quantity']) +' x Rs.'+currencyFormater(value['unitPrice']), 
-                right_aligned='Rs.'+currencyFormater(value['unitPrice']*value['quantity'])
-                ));
+    if (printData['type']=='Paid'):
         printer.lf()
-    printer.text ('')
-    printer.lf()
-    printer.text ("{:<1} {:<10} {:<14}".format('','TOTAL','Rs. '+currencyFormater(printData['total'])))
-    printer.lf();
+        printer.align('center')
+        printer.text ("{:<1} {:<25} {:<14}".format('','PAYMENT METHOD',printData['payMethod']))        
+        printer.lf()
+        printer.text ("{:<1} {:<25} {:<14}".format('','RECEIVED AMOUNT','Rs. '+currencyFormater(printData['total'])))        
+        printer.lf()
+        printer.text ("{:<1} {:<25} {:<14}".format('','RECEIVED BY',printData['issuedby']))        
+        printer.lf()
+        printer.lf()
+        printer.text('THANK YOU FOR YOUR PAYMENT !');
+        printer.lf()
+      
+
+    else: 
+        for (key, value) in printData['itemList'].items():
+            printer.align('left');
+            printer.text(value['make']+' '+value['item'] );
+            printer.lf();
+            printer.align('right')
+            printer.text ("{:<1} {:<20} {right_aligned:>15}".format(' ', 
+                    str(value['quantity']) +' x Rs.'+currencyFormater(value['unitPrice']), 
+                    right_aligned='Rs.'+currencyFormater(float(value['unitPrice'])*float(value['quantity']))
+                    ));
+            printer.lf()
+        printer.text ('')
+        printer.lf()
+        printer.text ("{:<1} {:<10} {:<14}".format('','TOTAL','Rs. '+currencyFormater(float(printData['total']))))
+        printer.lf();
     
     printer.lf()
     printer.lf()

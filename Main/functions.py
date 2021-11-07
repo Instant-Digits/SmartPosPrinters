@@ -3,6 +3,10 @@ from escpos.connections import getUSBPrinter
 
 
 def currencyFormater (num):
+    desimalIndex= str(num).find('.')
+    if desimalIndex>-1:
+        list = wrap(str(num)[desimalIndex-1::-1], 3)
+        return ','.join(list)[::-1]+str(num)[desimalIndex:desimalIndex+3] 
     list = wrap(str(num)[::-1], 3)
     return ','.join(list)[::-1]
 
@@ -23,4 +27,4 @@ def configPrinters (configData):
         return printers
     return (False)
 
-#print (currencyFormater(12345678))
+#print (currencyFormater('12345.50000'))
