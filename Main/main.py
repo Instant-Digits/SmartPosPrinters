@@ -6,10 +6,10 @@ from thermalPrinter import setThermalPrinting
 import time
 
 config = {
-        "apiKey": "AIzaSyANL3DLuQ9IZxN5sOjxODg4IoPuXQm6UxM",
-        "authDomain":  "aidrevs-test.firebaseapp.com",
-        "databaseURL":  "https://aidrevs-test-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "storageBucket": "aidrevs-test.appspot.com"
+        "apiKey": "AIzaSyAHiNXjCfRz_aQefCYoFglXo4ramCMcyIE",
+        "authDomain":  "smart-pos-plus-secondary.firebaseapp.com",
+        "databaseURL":  "https://smart-pos-plus-secondary-default-rtdb.firebaseio.com",
+        "storageBucket": "smart-pos-plus-secondary.appspot.com"
     }
 firebasecon = Firebase(config)
 db = firebasecon.database()
