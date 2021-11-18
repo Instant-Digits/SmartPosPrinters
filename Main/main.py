@@ -56,13 +56,15 @@ if ('thermalPrinter' in printers):
 if ('formPrinter' in printers):
     def listener(message):
         data=message["data"]        
-        if(data and len(printers)>0):            
+        if(data and len(printers)>0):  
+            #setDotMatrixPrinting(printers['formPrinter'],metaData,data)          
             try :
                 setDotMatrixPrinting(printers['formPrinter'],metaData,data)
+                db.child(metaData['firmID']+'/formPrint').remove()
             except :
                 print('printer error')
                 configurate()
                 setDotMatrixPrinting(printers['formPrinter'],metaData,data)
-            db.child(metaData['firmID']+'/formPrint').remove()
+            
     db.child(metaData['firmID']+'/formPrint').stream(listener)
 
