@@ -16,6 +16,8 @@ db = firebasecon.database()
 
 printers={}
 
+print ('System start')
+
 mac = get_mac()
 metaData=db.child('/Printers/'+str(mac)).get().val();
 try :
@@ -60,7 +62,7 @@ if ('formPrinter' in printers):
             #setDotMatrixPrinting(printers['formPrinter'],metaData,data)          
             try :
                 setDotMatrixPrinting(printers['formPrinter'],metaData,data)
-                db.child(metaData['firmID']+'/formPrint').remove()
+                #db.child(metaData['firmID']+'/formPrint').remove()
             except :
                 print('printer error')
                 configurate()

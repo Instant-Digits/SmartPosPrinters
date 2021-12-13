@@ -48,6 +48,18 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
         #         printer.lf();
         #         lineNo=lineNo+1
         printer.align('left');
+
+        
+        cusPhone = printData['namePhone'] if 'namePhone' in printData else '--'
+        cusAdress =  printData['nameAddress'] if 'nameAddress' in printData else '--' 
+      
+        
+        if int(printData['balance'])>0 :
+                invType = 'A/C'+' '+printData['type'] 
+        elif (int(printData['balance'])==0):  
+                invType = 'Cash'+' '+printData['type']
+        else:
+                invType =printData['type']
         
         while (lineNo<47):
                 if lineNo==1: 
@@ -77,14 +89,14 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                         printer.lf();
                         lineNo=lineNo+1 
                         printer.text ("{:<1}{:<7} {:<29} {:^8} {:<3} {:>6} {:^3} {:^6} {:>10}".format(      
-                                        '','TYPE',printData['type'].upper(),'','','','','','',                
+                                        '','TYPE',invType.upper(),'','','','','','',                
                                         ));
                         printer.lf();
                         lineNo=lineNo+1
                         printer.text ("{:<1}{:<7} {:<29} {:^8} {:<3} {:>6} {:^3} {:^6} {:>10}".format(      
                                         '',
                                         'DATE',
-                                        printData['date'] , 
+                                        printData['date']+' '+ printData['time'], 
                                        '',
                                         '',
                                         '',
@@ -95,8 +107,8 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                         lineNo=lineNo+1
                         printer.text ("{:<1}{:<7} {:<29} {:^8} {:<3} {:>6} {:^3} {:^6} {:>10}".format(      
                                         '',
-                                        'TIME',
-                                        printData['time'], 
+                                        'PHONE',
+                                        cusPhone, 
                                        '',
                                         '',
                                         '',
@@ -108,8 +120,8 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                 elif (lineNo==9) :
                         printer.text ("{:<1}{:<7} {:<29} {:^8} {:<1} {:<11}  {:^6} {:>10}".format(      
                                         '',
-                                        '',
-                                        '', 
+                                        'ADDRESS',
+                                        cusAdress, 
                                        '',
                                         '',
                                         printData['issuedby'],
@@ -118,6 +130,7 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                                         ));
                         printer.lf();
                         lineNo=lineNo+1 
+                        
 
                 elif ( lineNo==15):
                         i=1
@@ -135,15 +148,40 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                                 printer.lf();
                                 lineNo=lineNo+1                                
                                 i=i+1;
+                elif ( lineNo==36): 
+                        printer.text ("{:<1}{:<4} {:<32} {:^8} {:<3} {:>6} {:^3} {:<6} {:>10}".format(      
+                                        '',
+                                        '',
+                                        '', 
+                                        '',
+                                        '',
+                                        '',
+                                        '','TOTAL',
+                                        currencyFormater(float(printData['total'])),               
+                                        ));
+                        printer.lf();
+                        lineNo=lineNo+1;
+                        printer.text ("{:<1}{:<4} {:<32} {:^8} {:<3} {:>6} {:^3} {:<6} {:>10}".format(      
+                                        '',
+                                        '',
+                                        '', 
+                                        '',
+                                        '',
+                                        '',
+                                        '','PAID',
+                                        currencyFormater(float(printData['payAmount'])),               
+                                        ));
+                        printer.lf();
+                        lineNo=lineNo+1;
                 elif ( lineNo==40):#40
-                        printer.text ("{:<9}{:<10} {:<26} {:<3} {:>6} {:^9} {:>10}".format(      
+                        printer.text ("{:<9}{:<10} {:<26} {:<3} {:>4} {:^11} {:>10}".format(      
                                         '',
                                         '',
                                         '',                                        
                                         '',
                                         '',
-                                        'TOTAL (Rs)',
-                                       currencyFormater(float(printData['total'])),               
+                                        'BALANCE (Rs)',
+                                       currencyFormater(float(printData['balance'])),               
                                         ));
                         printer.lf();
                         lineNo=lineNo+1                        
