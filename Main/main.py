@@ -43,7 +43,7 @@ configurate()
 if ('thermalPrinter' in printers):
     def listener(message):
         data=message["data"]        
-        if(data and len(printers)>0):            
+        if(data and len(printers)>0):     
             try :
                 setThermalPrinting(printers['thermalPrinter'],metaData,data)                
             except :
