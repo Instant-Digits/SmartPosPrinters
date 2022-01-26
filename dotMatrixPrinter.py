@@ -138,7 +138,7 @@ def setDotMatrixPrinting(printer,printingHeader,printData ):
                                 printer.text ("{:<1}{:<4} {:<32} {:^8} {:<3} {:>6} {:^3} {:^6} {:>10}".format(      
                                         '',
                                         i,
-                                        value['make']+' '+value['item'] , 
+                                        value['label'] , 
                                         value['quantity'],
                                         'Nos',
                                         currencyFormater(value['unitPrice']),
