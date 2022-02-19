@@ -3,6 +3,7 @@ from functions import  configPrinter
 from uuid import getnode as get_mac
 from dotMatrixPrinter import setDotMatrixPrinting
 from thermalPrinter import setThermalPrinting
+from PDFprinter import setPDFInvoicePrinter
 import requests 
 
 import time
@@ -84,5 +85,26 @@ if ('formPrinter' in metaData['config']):
 
             
     db.child(metaData['firmID']+'/formPrint').stream(listener)
+
+
+
+if ('PDFPrinter' in metaData['config']):    
+    def listener(message):
+        data=message["data"]
+        if(data):
+            setPDFInvoicePrinter('PDFPrint',metaData,data)  
+            # try :
+            #     setPDFInvoicePrinter('PDFPrint',metaData,data)
+                
+            # except :
+            #     print('printer error')
+                
+
+            db.child(metaData['firmID']+'/PDFPrint').remove()
+
+            
+    db.child(metaData['firmID']+'/PDFPrint').stream(listener)
+    
+
 
 

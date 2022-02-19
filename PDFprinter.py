@@ -1,77 +1,111 @@
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import io
+from functions import currencyFormater
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
-packet = io.BytesIO()
-can = canvas.Canvas(packet, pagesize=letter)
-
-can.setFont("Helvetica", 11)
-can.drawString(70, 570, "NAME")
-can.drawString(135, 570, ": MURUKANDY H/W")
-
-can.drawString(70, 555, "PHONE")
-can.drawString(135, 555, ": 0776778048")
-
-can.drawString(70, 540, "ADDRESS")
-can.drawString(135, 540, ": KILINOCHCHI")
 
 
-can.drawString(370, 570, "Date")
-can.drawString(430, 570, ": 22/02/2022 08:12 AM")
+def setPDFInvoicePrinter (printer,printingHeader,printData ):
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=letter)
 
-can.drawString(370, 555, "Invoice No.")
-can.drawString(430, 555, ": 12-21-100")
+    cusPhone = printData['namePhone'] if 'namePhone' in printData else '--'
+    cusAdress =  printData['nameAddress'] if 'nameAddress' in printData else '--' 
 
-can.drawString(370, 540, "Issued by")
-can.drawString(430, 540, ": SHAGANAN")
+    can.setFont("Helvetica", 11)
+    can.drawString(70, 570, "NAME")
+    can.drawString(135, 570, ": "+printData['name'].upper())
 
+    can.drawString(70, 555, "PHONE")
+    can.drawString(135, 555, ": "+cusPhone)
 
-can.setFont("Helvetica", 10)
-
-can.drawString(37, 470, "{:^12}".format( '1'))
-can.drawString(80, 470, "MYROS BRAND HAND HACKSAW BLADES 18TPI")
-can.drawString(330, 470, "{:^18}".format( '1,000'))
-can.drawString(390, 470, "{:^27}".format( '10,000'))
-can.drawString(480, 470, "{:>24}".format( '100,000.00'))
-
-can.drawString(37, 455, "{:^12}".format( '11'))
-can.drawString(80, 455, "MYROS BRAND HAND HACKSAW BLADES 18TPI")
-can.drawString(330, 455, "{:^18}".format( '500'))
-can.drawString(390, 455, "{:^27}".format( '1,000'))
-can.drawString(480, 455, "{:>24}".format( '300,000.00'))
-
-can.drawString(37, 440, "{:^12}".format( '25'))
-can.drawString(80, 440, "MYROS BRAND HAND HACKSAW BLADES 18TPI")
-can.drawString(330, 440, "{:^18}".format( '50'))
-can.drawString(390, 440, "{:^27}".format( '1,000'))
-can.drawString(480, 440, "{:>24}".format( '30,000.00'))
-
-can.setFont("Helvetica", 13)
-can.drawString(450, 210, "{:>24}".format( '100,000.00'))
+    can.drawString(70, 540, "ADDRESS")
+    can.drawString(135, 540, ": "+cusAdress)
 
 
+    can.drawString(370, 570, "Date")
+    can.drawString(430, 570, ": "+printData['date']+' '+ printData['time'][0:5] +' '+printData['time'][-2:])
+
+    can.drawString(370, 555, "Invoice No.")
+    can.drawString(430, 555, ": "+printData['invoiceSN'])
+
+    can.drawString(370, 540, "Issued by")
+    can.drawString(430, 540, ": "+printData['issuedby'])
 
 
+   
+
+    if (printData['type']=='Paid'):
+        comment = "("+printData['comment']+')' if ('comment' in printData and  printData['comment'] and printData['comment']!='Nothing' ) else ' '
+        can.setFont("Helvetica", 13)
+        can.drawString(37, 460, "{:^12}".format( '1'))
+        can.drawString(80, 460, 'A PAYMENT RECEIVED-CONFIRMATION' )
+        can.drawString(340, 460,"{:^32}".format( printData['payMethod']))
+        can.drawRightString(570, 460, currencyFormater(printData['total'])+'.00')
+        can.setFont("Helvetica", 11)
+        can.drawString(80, 444, comment )
+
+    else :
+        can.setFont("Helvetica", 10)
+        i=0
+        for (key, value) in printData['itemList'].items():
+            y=470-i*15
+            i=i+1
+            can.drawString(37, y, "{:^12}".format( str(i)))
+            can.drawString(80, y, value['label'].upper() )
+            can.drawString(330, y, "{:^18}".format( value['quantity']))
+            can.drawRightString(470, y, currencyFormater(value['unitPrice'])+'.00')
+            can.drawRightString(570, y,  currencyFormater(float(value['unitPrice'])*float(value['quantity']))+'0')
+
+    can.setFont("Helvetica", 13)
+    can.drawRightString(565, 210, 'Rs. '+currencyFormater(float(printData['total']))+'0')
+
+    can.save()
+
+    #move to the beginning of the StringIO buffer
+    packet.seek(0)
+
+    # create a new PDF with Reportlab
+    new_pdf = PdfFileReader(packet)
+    # read your existing PDF
+    existing_pdf = PdfFileReader(open("paymentTemp.pdf", "rb")) if (printData['type']=='Paid') else PdfFileReader(open("invoiceTemp.pdf", "rb"))
+    output = PdfFileWriter()
+    # add the "watermark" (which is the new pdf) on the existing page
+    page = existing_pdf.getPage(0)
+    page.mergePage(new_pdf.getPage(0))
+    output.addPage(page)
+    # finally, write "output" to a real file
+    outputStream = open("destination.pdf", "wb")
+    output.write(outputStream)
+    outputStream.close()
 
 
+# from reportlab.pdfgen.canvas import Canvas
+# from reportlab.lib.units import inch, mm, cm, pica
+# from datetime import date, timedelta
 
+# if __name__ == "__main__":
+#     pdf = Canvas("output.pdf")
+#     pdf.setFont('Helvetica', 9)
 
-can.save()
+#     master_data = ...
+#     start = ...
+#     end = ...
+#     company = ...
+#     today = ...
 
-#move to the beginning of the StringIO buffer
-packet.seek(0)
-
-# create a new PDF with Reportlab
-new_pdf = PdfFileReader(packet)
-# read your existing PDF
-existing_pdf = PdfFileReader(open("template.pdf", "rb"))
-output = PdfFileWriter()
-# add the "watermark" (which is the new pdf) on the existing page
-page = existing_pdf.getPage(0)
-page.mergePage(new_pdf.getPage(0))
-output.addPage(page)
-# finally, write "output" to a real file
-outputStream = open("destination.pdf", "wb")
-output.write(outputStream)
-outputStream.close()
+#     lines = [
+#         "Rechnungsdatum: "+'today',
+#         "Leistungserbringung: "+ '',
+#         "Leistungszeitraum: "+'start'+" - "+'end',
+#         "Rechnungsnummer: "+'',
+#         "Lieferantennummer: ",
+#         "Zahlungsziel: " +str((date.today().replace(day=1) - timedelta(days=1)).day)+ " Tage",
+#     ]
+#     ys = [600,590,580,570,560,550]
+#     width = pdf._pagesize[0]
+#     padding = 10 * mm
+#     for y, line in zip(ys, lines):
+#         pdf.drawRightString(20, y, line)
+#     pdf.save()
