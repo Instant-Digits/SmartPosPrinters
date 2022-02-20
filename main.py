@@ -100,7 +100,7 @@ if ('PDFPrinter' in metaData['config']):
             #     print('printer error')
                 
 
-            db.child(metaData['firmID']+'/PDFPrint').remove()
+            #db.child(metaData['firmID']+'/PDFPrint').remove()
 
             
     db.child(metaData['firmID']+'/PDFPrint').stream(listener)
