@@ -16,6 +16,7 @@ install the packegs for printer
 
 for firebase
     sudo pip install pyrebase firebase
+PyPDF2
 
 give the permition for printer and system 
     sudo chmod +x printer.py / systemStart.py

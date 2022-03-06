@@ -3,6 +3,7 @@ from functions import  configPrinter
 from uuid import getnode as get_mac
 from dotMatrixPrinter import setDotMatrixPrinting
 from thermalPrinter import setThermalPrinting
+from wifiCheck import waitForInternet
 from PDFprinter import setPDFInvoicePrinter
 import requests 
 
@@ -19,15 +20,8 @@ db = firebasecon.database()
 
 
 print ('System start')
-while True:
-    try:
-        requests.get('https://www.google.com/').status_code
-        break
-    except:
-        time.sleep(5)
-        print ('Waiting for internet')
-        pass
 
+waitForInternet(4)
 
 mac = get_mac()
 print ('Mac : '+str(mac))
@@ -100,7 +94,7 @@ if ('PDFPrinter' in metaData['config']):
             #     print('printer error')
                 
 
-            #db.child(metaData['firmID']+'/PDFPrint').remove()
+            db.child(metaData['firmID']+'/PDFPrint').remove()
 
             
     db.child(metaData['firmID']+'/PDFPrint').stream(listener)

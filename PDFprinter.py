@@ -1,5 +1,6 @@
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import io
+import os
 from functions import currencyFormater
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -10,7 +11,7 @@ def setPDFInvoicePrinter (printer,printingHeader,printData ):
     packet = io.BytesIO()
     can = canvas.Canvas(packet, pagesize=letter)
 
-    cusPhone = printData['namePhone'] if 'namePhone' in printData else '--'
+    cusPhone = printData['namePhone'] if ('namePhone' in printData and printData['namePhone']) else '--'
     cusAdress =  printData['nameAddress'] if 'nameAddress' in printData else '--' 
 
     if int(printData['balance'])>0 :
@@ -99,6 +100,7 @@ def setPDFInvoicePrinter (printer,printingHeader,printData ):
     outputStream = open("destination.pdf", "wb")
     output.write(outputStream)
     outputStream.close()
+    os.system('lp ./destination.pdf')
 
 
 # from reportlab.pdfgen.canvas import Canvas
