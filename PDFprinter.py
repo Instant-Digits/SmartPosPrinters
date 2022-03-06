@@ -59,6 +59,7 @@ def setPDFInvoicePrinter (printer,printingHeader,printData ):
 
         can.setFont("Helvetica", 13)
         can.drawRightString(565, 210, 'Rs. '+currencyFormater(float(printData['total']))+'0')
+        
 
     else :
         can.setFont("Helvetica", 10)
